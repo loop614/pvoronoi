@@ -6,3 +6,5 @@ __pycache__
 .dmypy.json
 .editorconfig
 venv
+arhive
+.pre-commit-config.yaml
