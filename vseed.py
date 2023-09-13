@@ -2,25 +2,29 @@ from __future__ import annotations
 
 import math
 import random
+from typing import NamedTuple
 
-from vconfig import VoronoiConfig
-from vpoint import Point as VoronoiPoint
+import vcolor
+import vconfig
+import vpoint
 
 
-def generate_seeds(config: VoronoiConfig) -> list[VoronoiPoint]:
+class Seed(NamedTuple):
+    p: vpoint.Point
+    color: vcolor.Color
+
+
+def generate_seeds(config: vconfig.Config, colors: list[vcolor.Color]) -> list[Seed]:
     seeds = []
-    while True:
+    for i in range(config.number_of_seeds):
         pos_x = random.randint(0, config.width)
         pos_y = random.randint(0, config.height)
-        seeds.append(VoronoiPoint(x=pos_x, y=pos_y))
-
-        if len(seeds) == config.number_of_seeds:
-            break
+        seeds.append(Seed(p=vpoint.Point(x=pos_x, y=pos_y), color=colors[i]))
 
     return seeds
 
 
-def generate_seeds_random_by_square(config: VoronoiConfig) -> list[VoronoiPoint]:
+def generate_seeds_random_by_square(config: vconfig.Config) -> list[vpoint.Point]:
     seeds = []
     division_number = math.sqrt(config.number_of_seeds)
     width_box = math.ceil(config.width / division_number)
@@ -41,14 +45,14 @@ def generate_seeds_random_by_square(config: VoronoiConfig) -> list[VoronoiPoint]
             pos_x = random.randint(i, max_x)
             pos_y = random.randint(j, max_y)
             if pos_x < config.width and pos_y < config.height:
-                seeds.append(VoronoiPoint(x=pos_x, y=pos_y))
+                seeds.append(vpoint.Point(x=pos_x, y=pos_y))
             else:
                 print('not taken')
 
     return seeds
 
 
-def add_seeds_to_image(config: VoronoiConfig, image, seeds, colors):
+def add_seeds_to_image(config: vconfig.Config, image, seeds: list[Seed]):
     seed_size_range = range(
         -math.floor(config.seed_size / 2),
         math.floor(config.seed_size / 2),
@@ -56,10 +60,10 @@ def add_seeds_to_image(config: VoronoiConfig, image, seeds, colors):
     for (index, seed) in enumerate(seeds):
         for size_x in seed_size_range:
             for size_y in seed_size_range:
-                x = min(seed.x + size_x, config.width - 1)
-                y = min(seed.y + size_y, config.height - 1)
+                x = min(seed.p.x + size_x, config.width - 1)
+                y = min(seed.p.y + size_y, config.height - 1)
                 seed_color = 0x000000
-                if colors[index].r == 0 and colors[index].g == 0 and colors[index].b == 0:
+                if seeds[index].color.r == 0 and seeds[index].color.g == 0 and seeds[index].color.b == 0:
                     seed_color = 0xffffff
 
                 image[y][x] = seed_color
@@ -67,13 +71,19 @@ def add_seeds_to_image(config: VoronoiConfig, image, seeds, colors):
     return image
 
 
-def get_closest_seed(needle, seeds):
+def get_closest_seed(needle: vpoint.Point, seeds) -> Seed:
     min_dis = float('inf')
-    i = 0
-    for index, seed in enumerate(seeds):
-        dis = needle.get_squared_distance_to(seed)
-        if dis < min_dis:
-            min_dis = dis
-            i = index
+    min_seed = Seed(color=vcolor.Color(r=0, g=0, b=0), p=vpoint.Point(0, 0))
 
-    return i
+    for index, seed in enumerate(seeds):
+        dis = needle.get_squared_distance_to(seed.p)
+        if dis < min_dis:
+            min_seed = Seed(
+                color=vcolor.Color(
+                    r=seed.color.r, g=seed.color.g, b=seed.color.b,
+                ),
+                p=vpoint.Point(seed.p.x, seed.p.y),
+            )
+            min_dis = dis
+
+    return min_seed

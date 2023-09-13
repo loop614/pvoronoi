@@ -3,8 +3,6 @@ from __future__ import annotations
 from bisect import bisect_left
 from typing import NamedTuple
 
-from vpoint import Point as VoronoiPoint
-
 
 class Color(NamedTuple):
     r: int = 0
@@ -12,10 +10,10 @@ class Color(NamedTuple):
     b: int = 0
 
 
-def generate_colors(seeds: list[VoronoiPoint]) -> list[Color]:
+def generate_colors(seed_len: int) -> list[Color]:
     colors = []
-    # TODO: remove + 1
-    seed_len = len(seeds) + 1
+    # + 1 to avoid 00 00 00
+    seed_len += 1
     r, g, b = generate_rgb_diversity_arrays(seed_len)
     for i in range(seed_len):
         if not (r[i] == 0 and g[i] == 0 and b[i] == 0):

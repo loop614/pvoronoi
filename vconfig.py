@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import NamedTuple
 
 
-class VoronoiConfig(NamedTuple):
+class Config(NamedTuple):
     height: int = 0
     width: int = 0
     number_of_seeds: int = 0
@@ -12,7 +12,7 @@ class VoronoiConfig(NamedTuple):
 
 def get_config():
     factor = 20
-    return VoronoiConfig(
+    return Config(
         height=factor*9,
         width=factor*16,
         number_of_seeds=8,
