@@ -4,6 +4,9 @@
 ## Requirements
 - python3 and requirements
 
+## Status
+- bugfixes
+
 ## Quick Start
 ```console
 $ python3 main.py

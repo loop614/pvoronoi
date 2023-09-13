@@ -3,8 +3,8 @@ from __future__ import annotations
 import math
 import random
 
-from voronoi_config import VoronoiConfig
-from voronoi_point import Point as VoronoiPoint
+from vconfig import VoronoiConfig
+from vpoint import Point as VoronoiPoint
 
 
 def generate_seeds(config: VoronoiConfig) -> list[VoronoiPoint]:

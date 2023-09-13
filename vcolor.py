@@ -3,7 +3,7 @@ from __future__ import annotations
 from bisect import bisect_left
 from typing import NamedTuple
 
-from voronoi_point import Point as VoronoiPoint
+from vpoint import Point as VoronoiPoint
 
 
 class Color(NamedTuple):
@@ -14,7 +14,7 @@ class Color(NamedTuple):
 
 def generate_colors(seeds: list[VoronoiPoint]) -> list[Color]:
     colors = []
-    #TODO: remove + 1
+    # TODO: remove + 1
     seed_len = len(seeds) + 1
     r, g, b = generate_rgb_diversity_arrays(seed_len)
     for i in range(seed_len):
