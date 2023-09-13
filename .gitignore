@@ -1,10 +1,4 @@
-.idea
-.vscode
+.idea/
+venv/
 __pycache__
-.pytest_cache
-.mypy_cache
-.dmypy.json
-.editorconfig
-venv
-arhive
-.pre-commit-config.yaml
+.mypy_cache/

@@ -1,4 +1,11 @@
-[Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram) png generator
+## Description
+- [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram) png generator with distinct colors
 
-### next TODO
-1 . optimize color fillings
+## Requirements
+- python3 and requirements
+
+## Quick Start
+```console
+$ python3 main.py
+```
+- output.png
