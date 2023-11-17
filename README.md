@@ -11,4 +11,6 @@
 ```console
 $ python3 main.py
 ```
-- output.png
+
+## Output
+<div align="left"><img src="https://raw.githubusercontent.com/loop614/pvoronoi/main/output.png" alt="output"/></div>
