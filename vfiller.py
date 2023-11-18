@@ -54,8 +54,8 @@ def fill_by_circles(
         )
         for y in range(left_upper.y, min(left_upper.y + square_size, config.height)):
             for x in range(left_upper.x, min(right_upper.x, config.width)):
-                if circle_center.p.get_distance_to(vpoint.Point(x, y)) < circle_size:
-                    if not filled[y][x]:
+                if not filled[y][x]:
+                    if circle_center.p.get_distance_to(vpoint.Point(x, y)) < circle_size:
                         image[y][x] = (
                             seeds[pivot].color.r,
                             seeds[pivot].color.g,
