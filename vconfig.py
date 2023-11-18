@@ -11,10 +11,10 @@ class Config(NamedTuple):
 
 
 def get_config():
-    factor = 20
+    factor = 100 
     return Config(
         height=factor*9,
         width=factor*16,
-        number_of_seeds=8,
+        number_of_seeds=16,
         seed_size=5,
     )

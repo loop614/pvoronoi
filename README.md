@@ -23,7 +23,7 @@ $ python3 main.py
 ```
 
 ## Method fill_by_circles at 10%
-<div align="left"><img src="https://raw.githubusercontent.com/loop614/pvoronoi/main/method_fill_by_circles.png" alt="output"/></div>
+<div align="left"><img src="https://raw.githubusercontent.com/loop614/pvoronoi/main/method_fill_by_circles.png" width=320 height=180 alt="output"/></div>
 
 ## Output
-<div align="left"><img src="https://raw.githubusercontent.com/loop614/pvoronoi/main/output.png" alt="output"/></div>
+<div align="left"><img src="https://raw.githubusercontent.com/loop614/pvoronoi/main/output.png" width=320 height=180 alt="output"/></div>
