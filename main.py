@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from vdiagram import generate_image
+import vdiagram
 
 if __name__ == '__main__':
-    raise SystemExit(generate_image())
+    raise SystemExit(vdiagram.generate_image())

@@ -7,7 +7,11 @@ import vpoint
 import vseed
 
 
-def fill_voronoi_diagrams(image, config: vconfig.Config, seeds: list[vseed.Seed]):
+def fill_voronoi_diagrams(
+    image,
+    config: vconfig.Config,
+    seeds: list[vseed.Seed],
+):
     filled = {}
     for i in range(config.height):
         filled[i] = {j: False for j in range(config.width)}
@@ -24,7 +28,14 @@ def fill_voronoi_diagrams(image, config: vconfig.Config, seeds: list[vseed.Seed]
     return image
 
 
-def fill_by_circles(config, image, seeds, filled, iteration_break, dots):
+def fill_by_circles(
+    config: vconfig.Config,
+    image,
+    seeds: list[vseed.Seed],
+    filled: dict,
+    iteration_break: float,
+    dots: int,
+) -> dict:
     """
     do circles around seeds in color
     stop at iteration_break since big circles cost too much
@@ -34,20 +45,24 @@ def fill_by_circles(config, image, seeds, filled, iteration_break, dots):
     pivot = 0
 
     while True:
+        circle_center = seeds[pivot]
+        circle_size = index_per_pivot[pivot]
+        index_per_pivot[pivot] += 1
+
         left_upper, right_upper, square_size = get_square(
             config, index_per_pivot[pivot], seeds[pivot],
         )
-        index_per_pivot[pivot] += 1
         for y in range(left_upper.y, min(left_upper.y + square_size, config.height)):
             for x in range(left_upper.x, min(right_upper.x, config.width)):
-                if not filled[y][x]:
-                    image[y][x] = (
-                        seeds[pivot].color.r,
-                        seeds[pivot].color.g,
-                        seeds[pivot].color.b,
-                    )
-                    filled[y][x] = True
-                    dots -= 1
+                if circle_center.p.get_distance_to(vpoint.Point(x, y)) < circle_size:
+                    if not filled[y][x]:
+                        image[y][x] = (
+                            seeds[pivot].color.r,
+                            seeds[pivot].color.g,
+                            seeds[pivot].color.b,
+                        )
+                        filled[y][x] = True
+                        dots -= 1
 
         pivot = get_next_pilot(config, pivot)
         if dots <= iteration_break:
@@ -55,9 +70,9 @@ def fill_by_circles(config, image, seeds, filled, iteration_break, dots):
 
 
 def get_square(
-        config: vconfig.Config,
-        index: int,
-        seed_point: vseed.Seed,
+    config: vconfig.Config,
+    index: int,
+    seed_point: vseed.Seed,
 ) -> tuple[vpoint.Point, vpoint.Point, int]:
     """
     square around the seed
@@ -74,14 +89,19 @@ def get_square(
     return left_upper, right_upper, square_size
 
 
-def get_next_pilot(config, pivot):
+def get_next_pilot(config: vconfig.Config, pivot: int) -> int:
     pivot += 1
     if pivot > config.number_of_seeds - 1:
         pivot = 0
     return pivot
 
 
-def fill_by_calculating_distance(config, image, seeds, filled):
+def fill_by_calculating_distance(
+    config: vconfig.Config,
+    image,
+    seeds: list[vseed.Seed],
+    filled: dict,
+) -> None:
     """
     leftover empties need to be calculated one by one
     its less expensive than circles
