@@ -20,7 +20,7 @@ def generate_image():
         'this many seeds wont fit to this small image'
     colors = vcolor.generate_colors(config.number_of_seeds)
     seeds = vseed.generate_seeds(config, colors)
-    # seeds = generate_seeds_random_by_square()
+    # seeds = vseed.generate_seeds_random_by_square()
     image = np.zeros((config.height, config.width, 3), np.uint8)
     image = vfiller.fill_voronoi_diagrams(image, config, seeds)
     image = vseed.add_seeds_to_image(config, image, seeds)

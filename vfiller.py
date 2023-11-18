@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+import math
 
 import vconfig
 import vpoint
@@ -16,13 +17,7 @@ def fill_voronoi_diagrams(
     for i in range(config.height):
         filled[i] = {j: False for j in range(config.width)}
 
-    dots = config.width * config.height
-    iteration_break = 0.9 * dots
-
-    filled = fill_by_circles(
-        config, image, seeds,
-        filled, iteration_break, dots,
-    )
+    filled = fill_by_circles(config, image, seeds, filled, dots_ratio=0.1)
     fill_by_calculating_distance(config, image, seeds, filled)
 
     return image
@@ -33,67 +28,86 @@ def fill_by_circles(
     image,
     seeds: list[vseed.Seed],
     filled: dict,
-    iteration_break: float,
-    dots: int,
+    dots_ratio: float
 ) -> dict:
     """
-    do circles around seeds in color
-    stop at iteration_break since big circles cost too much
-    fill only once per dot
+    do circles around seeds that are far apart in color
+    we can not circle seeds that are close
+    stop at iteration_break
     """
-    index_per_pivot: defaultdict = defaultdict(lambda: 1)
-    pivot = 0
+    close_neighbour_distance = int(config.height / 5)
+    dots = config.width * config.height
+    circle_seeds = find_seeds_circle_method(seeds, close_neighbour_distance);
 
-    while True:
-        circle_center = seeds[pivot]
-        circle_size = index_per_pivot[pivot]
-        index_per_pivot[pivot] += 1
+    dots_per_seed = (dots_ratio * dots) / len(seeds)
+    iteration_break = dots_per_seed * len(circle_seeds)
 
-        left_upper, right_upper, square_size = get_square(
-            config, index_per_pivot[pivot], seeds[pivot],
-        )
-        for y in range(left_upper.y, min(left_upper.y + square_size, config.height)):
-            for x in range(left_upper.x, min(right_upper.x, config.width)):
-                if not filled[y][x]:
-                    if circle_center.p.get_distance_to(vpoint.Point(x, y)) < circle_size:
-                        image[y][x] = (
-                            seeds[pivot].color.r,
-                            seeds[pivot].color.g,
-                            seeds[pivot].color.b,
-                        )
-                        filled[y][x] = True
-                        dots -= 1
+    filled = fill_selected_by_circles(
+        config, image, circle_seeds,
+        filled, iteration_break, close_neighbour_distance
+    )
 
-        pivot = get_next_pilot(config, pivot)
-        if dots <= iteration_break:
-            return filled
+    return filled
 
 
-def get_square(
+def find_seeds_circle_method(
+    seeds: list[vseed.Seed],
+    close_neighbour_distance: int
+) -> list[vseed.Seed]:
+    possible_seeds: list[vseed.Seed] = []
+    for seed in seeds:
+        has_really_close_neighbour = False
+        for seed2 in seeds:
+            if (id(seed) == id(seed2)):
+                continue
+
+            neighbour_distance = seed.p.get_distance_to(seed2.p)
+            if (neighbour_distance < close_neighbour_distance):
+                has_really_close_neighbour = True
+                break
+
+        if not has_really_close_neighbour:
+            possible_seeds.append(seed)
+
+    return possible_seeds;
+
+
+def fill_selected_by_circles(
     config: vconfig.Config,
-    index: int,
-    seed_point: vseed.Seed,
-) -> tuple[vpoint.Point, vpoint.Point, int]:
-    """
-    square around the seed
-    grows every iteration
-    """
-    left_upper_x = max(0, seed_point.p.x - index)
-    left_upper_y = max(0, seed_point.p.y - index)
-    left_upper = vpoint.Point(x=left_upper_x, y=left_upper_y)
-    right_upper_x = min(config.width - 1, seed_point.p.x + index)
-    right_upper_y = min(config.height - 1, seed_point.p.y - index)
-    right_upper = vpoint.Point(x=right_upper_x, y=right_upper_y)
-    square_size = index * 2
+    image,
+    seeds: list[vseed.Seed],
+    filled: dict,
+    iteration_break: float,
+    close_neighbour_distance: int,
+) -> dict:
+    index_per_pivot: defaultdict = defaultdict(lambda: 1)
+    dots_painted = 0
+    pivots_out: list[int] = []
 
-    return left_upper, right_upper, square_size
+    while dots_painted <= iteration_break and len(pivots_out) < len(seeds):
+        for pivot, seed in enumerate(seeds):
+            circle_center = seed
+            circle_radius = index_per_pivot[pivot]
+            index_per_pivot[pivot] += 1
+            if index_per_pivot[pivot] > close_neighbour_distance / 2:
+                pivots_out.append(pivot)
+                continue
 
+            left_upper_x = max(0, circle_center.p.x - circle_radius)
+            left_upper_y = max(0, circle_center.p.y - circle_radius)
+            right_upper_x = min(config.width - 1, circle_center.p.x + circle_radius)
 
-def get_next_pilot(config: vconfig.Config, pivot: int) -> int:
-    pivot += 1
-    if pivot > config.number_of_seeds - 1:
-        pivot = 0
-    return pivot
+            for y in range(left_upper_y, min(left_upper_y + 2 * circle_radius, config.height)):
+                for x in range(left_upper_x, min(right_upper_x, config.width)):
+                    if filled[y][x]:
+                        continue
+                    if circle_center.p.get_squared_distance_to(vpoint.Point(x, y)) > math.pow(circle_radius, 2):
+                        continue
+                    image[y][x] = (seed.color.r, seed.color.g, seed.color.b)
+                    filled[y][x] = True
+                    dots_painted += 1
+
+    return filled
 
 
 def fill_by_calculating_distance(

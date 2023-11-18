@@ -17,8 +17,8 @@ class Seed(NamedTuple):
 def generate_seeds(config: vconfig.Config, colors: list[vcolor.Color]) -> list[Seed]:
     seeds = []
     for i in range(config.number_of_seeds):
-        pos_x = random.randint(0, config.width)
-        pos_y = random.randint(0, config.height)
+        pos_x = random.randint(config.seed_size, config.width - config.seed_size)
+        pos_y = random.randint(config.seed_size, config.height - config.seed_size)
         seeds.append(Seed(p=vpoint.Point(x=pos_x, y=pos_y), color=colors[i]))
 
     return seeds

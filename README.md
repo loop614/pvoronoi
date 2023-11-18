@@ -1,8 +1,7 @@
 ## Description
 - [Voronoi diagram](https://en.wikipedia.org/wiki/Voronoi_diagram) png generator with distinct colors
 - Two methods to fill the canvas are used
-- Starting with method fill_by_circles, finished with fill_by_calculating_distance
-- Using 10% fill_by_circles and 90% fill_by_calculating_distance seems like a best ratio
+- Starting with method fill_by_circles only when seeds are far apart, finished with fill_by_calculating_distance
 
 ## Requirements
 - python3, python3-venv and requirements.txt
