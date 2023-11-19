@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 from bisect import bisect_left
-from typing import NamedTuple
 
 
-class Color(NamedTuple):
+class Color():
     r: int = 0
     g: int = 0
     b: int = 0
+
+    def __init__(self, r: int, g: int, b: int) -> None:
+        self.r = r
+        self.g = g
+        self.b = b
 
 
 def generate_colors(seed_len: int) -> list[Color]:

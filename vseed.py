@@ -2,23 +2,35 @@ from __future__ import annotations
 
 import math
 import random
-from typing import NamedTuple
 
 import vcolor
 import vconfig
 import vpoint
 
 
-class Seed(NamedTuple):
+class Seed():
     p: vpoint.Point
     color: vcolor.Color
+    circle_size: int
+
+    def __init__(self, p: vpoint.Point, color: vcolor.Color):
+        self.p = p
+        self.color = color
+        self.circle_size = 0
+
+    def set_circle_size(self, circle_size: int) -> None:
+        self.circle_size = circle_size
 
 
 def generate_seeds(config: vconfig.Config, colors: list[vcolor.Color]) -> list[Seed]:
     seeds = []
     for i in range(config.number_of_seeds):
-        pos_x = random.randint(config.seed_size, config.width - config.seed_size)
-        pos_y = random.randint(config.seed_size, config.height - config.seed_size)
+        pos_x = random.randint(
+            config.seed_size, config.width - config.seed_size,
+        )
+        pos_y = random.randint(
+            config.seed_size, config.height - config.seed_size,
+        )
         seeds.append(Seed(p=vpoint.Point(x=pos_x, y=pos_y), color=colors[i]))
 
     return seeds
