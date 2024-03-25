@@ -5,6 +5,7 @@
 
 ## Requirements
 - python3, python3-venv and requirements.txt
+- or with docker
 
 ## Status
 - poc done
@@ -18,8 +19,9 @@ $ python3 main.py
 $ deactivate
 ```
 
+## Quick Start using Docker:
 ```console
-$ python3 main.py
+$ docker compose run --rm pvoronoi python3 main.py
 ```
 
 ## Method fill_by_circles

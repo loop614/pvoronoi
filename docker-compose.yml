@@ -1,0 +1,6 @@
+services:
+  pvoronoi:
+    build: .
+    volumes:
+      - ./:/usr/src/app/
+

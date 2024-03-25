@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 
 import numpy as np
-from PIL import Image
+import imageio
 
 import vcolor
 import vconfig
@@ -21,8 +21,7 @@ def generate_image():
     colors = vcolor.generate_colors(config.number_of_seeds)
     seeds = vseed.generate_seeds(config, colors)
     # seeds = vseed.generate_seeds_random_by_square()
-    image = np.zeros((config.height, config.width, 3), np.uint8)
-    image = vfiller.fill_voronoi_diagrams(image, config, seeds)
-    image = vseed.add_seeds_to_image(config, image, seeds)
-    im = Image.fromarray(image).convert('RGB')
-    im.save('out.png')
+    image_matrix = np.zeros((config.height, config.width, 3), np.uint8)
+    image_matrix = vfiller.fill_voronoi_diagrams(image_matrix, config, seeds)
+    image_matrix = vseed.add_seeds_to_image(config, image_matrix, seeds)
+    imageio.imwrite('out.png', (image_matrix * 255).astype(np.uint8))
