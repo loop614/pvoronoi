@@ -6,26 +6,23 @@ import vseed
 
 
 def fill_voronoi_diagrams(
-    image,
+    image_matrix,
     config: vconfig.Config,
     seeds: list[vseed.Seed],
 ):
-    filled = {}
-    for i in range(config.height):
-        filled[i] = {j: False for j in range(config.width)}
+    filled = [[False for j in range(config.width)] for i in range(config.height)]
+    filled = fill_by_circles(config, image_matrix, seeds, filled)
+    fill_by_calculating_distance(config, image_matrix, seeds, filled)
 
-    filled = fill_by_circles(config, image, seeds, filled)
-    fill_by_calculating_distance(config, image, seeds, filled)
-
-    return image
+    return image_matrix
 
 
 def fill_by_circles(
     config: vconfig.Config,
-    image,
+    image_matrix,
     seeds: list[vseed.Seed],
-    filled: dict,
-) -> dict:
+    filled: list[list[bool]],
+) -> list[list[bool]]:
     """
     do circles around seeds that are far apart in color
     we can not circle seeds that are close
@@ -33,7 +30,7 @@ def fill_by_circles(
     """
     seeds = add_circle_size_to_seeds(seeds)
 
-    return fill_seed_circles(config, image, seeds, filled)
+    return fill_seed_circles(config, image_matrix, seeds, filled)
 
 
 def add_circle_size_to_seeds(seeds: list[vseed.Seed]) -> list[vseed.Seed]:
@@ -54,10 +51,10 @@ def add_circle_size_to_seeds(seeds: list[vseed.Seed]) -> list[vseed.Seed]:
 
 def fill_seed_circles(
     config: vconfig.Config,
-    image,
+    image_matrix,
     seeds: list[vseed.Seed],
-    filled: dict,
-) -> dict:
+    filled: list[list[bool]],
+) -> list[list[bool]]:
     for seed in seeds:
         circle_center = seed
         circle_radius = seed.circle_size
@@ -74,7 +71,7 @@ def fill_seed_circles(
                     continue
                 if circle_center.p.get_squared_distance_to(vpoint.Point(x, y)) > circle_radius ** 2:
                     continue
-                image[y][x] = (seed.color.r, seed.color.g, seed.color.b)
+                image_matrix[y][x] = (seed.color.r, seed.color.g, seed.color.b)
                 filled[y][x] = True
 
     return filled
@@ -82,9 +79,9 @@ def fill_seed_circles(
 
 def fill_by_calculating_distance(
     config: vconfig.Config,
-    image,
+    image_matrix,
     seeds: list[vseed.Seed],
-    filled: dict,
+    filled: list[list[bool]],
 ) -> None:
     """
     leftover empties need to be calculated one by one
@@ -98,8 +95,9 @@ def fill_by_calculating_distance(
             closest_seed = vseed.get_closest_seed(
                 vpoint.Point(x=x, y=y), seeds,
             )
-            image[y][x] = (
+            image_matrix[y][x] = (
                 closest_seed.color.r,
                 closest_seed.color.g,
                 closest_seed.color.b,
             )
+            filled[y][x] = True

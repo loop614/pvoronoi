@@ -64,7 +64,7 @@ def generate_seeds_random_by_square(config: vconfig.Config) -> list[vpoint.Point
     return seeds
 
 
-def add_seeds_to_image(config: vconfig.Config, image, seeds: list[Seed]):
+def add_seeds_to_image(config: vconfig.Config, image_matrix, seeds: list[Seed]):
     seed_size_range = range(
         -math.floor(config.seed_size / 2),
         math.floor(config.seed_size / 2),
@@ -78,9 +78,9 @@ def add_seeds_to_image(config: vconfig.Config, image, seeds: list[Seed]):
                 if seeds[index].color.r == 0 and seeds[index].color.g == 0 and seeds[index].color.b == 0:
                     seed_color = 0xffffff
 
-                image[y][x] = seed_color
+                image_matrix[y][x] = seed_color
 
-    return image
+    return image_matrix
 
 
 def get_closest_seed(needle: vpoint.Point, seeds) -> Seed:

@@ -21,7 +21,7 @@ $ deactivate
 
 ## Quick Start using Docker:
 ```console
-$ docker compose run --rm pvoronoi python3 main.py
+$ docker compose run pvoronoi python3 main.py
 ```
 
 ## Method fill_by_circles

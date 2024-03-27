@@ -24,4 +24,4 @@ def generate_image():
     image_matrix = np.zeros((config.height, config.width, 3), np.uint8)
     image_matrix = vfiller.fill_voronoi_diagrams(image_matrix, config, seeds)
     image_matrix = vseed.add_seeds_to_image(config, image_matrix, seeds)
-    imageio.imwrite('out.png', (image_matrix * 255).astype(np.uint8))
+    imageio.imwrite('out.png', image_matrix)
