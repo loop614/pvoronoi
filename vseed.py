@@ -11,15 +11,16 @@ import vpoint
 class Seed():
     p: vpoint.Point
     color: vcolor.Color
-    circle_size: int
+    circle_radius: int
 
     def __init__(self, p: vpoint.Point, color: vcolor.Color):
         self.p = p
         self.color = color
-        self.circle_size = 0
+        self.circle_radius = 0
 
-    def set_circle_size(self, circle_size: int) -> None:
-        self.circle_size = circle_size
+    def set_circle_radius(self, circle_radius: int) -> None:
+        self.circle_radius = circle_radius
+        self.circle_diameter = 2 * circle_radius
 
 
 def generate_seeds(config: vconfig.Config, colors: list[vcolor.Color]) -> list[Seed]:
