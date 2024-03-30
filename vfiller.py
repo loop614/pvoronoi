@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import numpy as np
+
 import vconfig
 import vpoint
 import vseed
 
 
 def fill_voronoi_diagrams(
-    image_matrix,
+    image_matrix: np.array[np.array],
     config: vconfig.Config,
     seeds: list[vseed.Seed],
 ):
@@ -19,7 +21,7 @@ def fill_voronoi_diagrams(
 
 def fill_by_circles(
     config: vconfig.Config,
-    image_matrix,
+    image_matrix: np.array[np.array],
     seeds: list[vseed.Seed],
     filled: list[list[bool]],
 ) -> list[list[bool]]:
@@ -29,8 +31,10 @@ def fill_by_circles(
     stop at iteration_break
     """
     seeds = add_circle_size_to_seeds(seeds)
+    for seed in seeds:
+        fill_seed_circles(config, image_matrix, seed, filled)
 
-    return fill_seed_circles(config, image_matrix, seeds, filled)
+    return filled
 
 
 def add_circle_size_to_seeds(seeds: list[vseed.Seed]) -> list[vseed.Seed]:
@@ -51,35 +55,30 @@ def add_circle_size_to_seeds(seeds: list[vseed.Seed]) -> list[vseed.Seed]:
 
 def fill_seed_circles(
     config: vconfig.Config,
-    image_matrix,
-    seeds: list[vseed.Seed],
+    image_matrix: np.array[np.array],
+    seed: vseed.Seed,
     filled: list[list[bool]],
-) -> list[list[bool]]:
-    for seed in seeds:
-        circle_center = seed
-        circle_radius = seed.circle_size
+) -> None:
+    left_upper_x = max(0, seed.p.x - seed.circle_size)
+    left_upper_y = max(0, seed.p.y - seed.circle_size)
+    right_upper_x = min(
+        config.width - 1, seed.p.x + seed.circle_size,
+    )
 
-        left_upper_x = max(0, circle_center.p.x - circle_radius)
-        left_upper_y = max(0, circle_center.p.y - circle_radius)
-        right_upper_x = min(
-            config.width - 1, circle_center.p.x + circle_radius,
-        )
+    for y in range(left_upper_y, min(left_upper_y + 2 * seed.circle_size, config.height)):
+        for x in range(left_upper_x, min(right_upper_x, config.width)):
+            if filled[y][x]:
+                continue
+            if seed.p.get_squared_distance_to(vpoint.Point(x, y)) > seed.circle_size ** 2:
+                continue
+            image_matrix[y][x] = (seed.color.r, seed.color.g, seed.color.b)
+            filled[y][x] = True
 
-        for y in range(left_upper_y, min(left_upper_y + 2 * circle_radius, config.height)):
-            for x in range(left_upper_x, min(right_upper_x, config.width)):
-                if filled[y][x]:
-                    continue
-                if circle_center.p.get_squared_distance_to(vpoint.Point(x, y)) > circle_radius ** 2:
-                    continue
-                image_matrix[y][x] = (seed.color.r, seed.color.g, seed.color.b)
-                filled[y][x] = True
-
-    return filled
 
 
 def fill_by_calculating_distance(
     config: vconfig.Config,
-    image_matrix,
+    image_matrix: np.array[np.array],
     seeds: list[vseed.Seed],
     filled: list[list[bool]],
 ) -> None:
