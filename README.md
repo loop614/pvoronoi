@@ -5,7 +5,7 @@
 - fill_by_calculating_distance calculates the distance for all the seeds per pixel, to find the closest, and colors it to seeds color
 - fill_by_circles calculates a two rectangles, one in circle, one outside the circle
 
-<div align="left"><img src="https://raw.githubusercontent.com/loop614/pvoronoi/main/circle_with_square_inside_and_outside.png" width=342 height=342 alt="circle_with_square_inside_and_outside"/></div>
+<div align="left"><img src="https://raw.githubusercontent.com/loop614/pvoronoi/main/circle_with_square_inside_and_outside.png" width=150 height=150 alt="circle_with_square_inside_and_outside"/></div>
 
 - Rectangle inside is 'safe' to paint to seed color
 - Painting the rectangle outside needs one calculation of distance to the seed center to check if it is in the circle radius
