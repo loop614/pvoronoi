@@ -17,6 +17,7 @@ class Seed():
         self.p = p
         self.color = color
         self.circle_radius = 0
+        self.circle_diameter = 0
 
     def set_circle_radius(self, circle_radius: int) -> None:
         self.circle_radius = circle_radius

@@ -34,17 +34,17 @@ def fill_by_circles(
 
 
 def add_circle_radius_to_seeds(seeds: list[vseed.Seed]) -> list[vseed.Seed]:
-    for seed in seeds:
-        min_distance_neighbour = float('inf')
-        for seed2 in seeds:
-            if (id(seed) == id(seed2)):
+    for i in range(len(seeds)):
+        for j in range(i + 1, len(seeds)):
+            if i == j:
                 continue
 
-            neighbour_distance = seed.p.get_distance_to(seed2.p)
-            if (neighbour_distance < min_distance_neighbour):
-                min_distance_neighbour = neighbour_distance
+            curr_dist = seeds[i].p.get_distance_to(seeds[j].p)
+            if seeds[i].circle_diameter == 0 or seeds[i].circle_diameter > curr_dist:
+                seeds[i].set_circle_radius(int(curr_dist/2))
 
-        seed.set_circle_radius(int(min_distance_neighbour / 2))
+            if seeds[j].circle_diameter == 0 or seeds[j].circle_diameter > curr_dist:
+                seeds[j].set_circle_radius(int(curr_dist/2))
 
     return seeds
 
